@@ -1,0 +1,18 @@
+[
+    {
+        "role": "user",
+        "content": "what is the weather?"
+    },
+    {
+        "role": "assistant",
+        "content": "I don't have real-time access to current weather conditions. However, I can suggest checking a weather website or app for the most up-to-date information on the weather in your area."
+    },
+    {
+        "role": "user",
+        "content": "weather of pune city right now?"
+    },
+    {
+        "role": "assistant",
+        "content": "I don't have real-time access to current weather conditions. However, I can suggest checking a weather website or app such as AccuWeather or OpenWeatherMap for the most up-to-date information on the weather in Pune City."
+    }
+]
