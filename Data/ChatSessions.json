@@ -376,5 +376,280 @@
                 "content": "\u0924\u0941\u092e\u091a\u094d\u092f\u093e \u092e\u0930\u093e\u0920\u0940 \u092d\u093e\u0937\u0947\u0924 \u092c\u094b\u0932\u0923\u094d\u092f\u093e\u091a\u093e \u092a\u094d\u0930\u092f\u0924\u094d\u0928 \u0915\u0930\u0947\u0928. \u092e\u0932\u093e \u0906\u0936\u093e \u0906\u0939\u0947 \u0915\u0940 \u0924\u0941\u092e\u094d\u0939\u093e\u0932\u093e \u092e\u093e\u091d\u0940 \u092e\u0930\u093e\u0920\u0940 \u0938\u092e\u091c\u0947\u0932.\n\n\u0915\u0938\u0947 \u0906\u0939\u093e\u0924? \u0915\u093e\u092f \u091a\u093e\u0932\u0932\u0947 \u0906\u0939\u0947? \u0924\u0941\u092e\u094d\u0939\u093e\u0932\u093e \u0915\u093e\u0939\u0940 \u092e\u0926\u0924 \u0932\u093e\u0917\u0932\u0940 \u0905\u0938\u0947\u0932 \u0924\u0930 \u092e\u0932\u093e \u0938\u093e\u0902\u0917\u093e. \u092e\u0940 \u0924\u0941\u092e\u091a\u094d\u092f\u093e \u092e\u0926\u0924\u0940\u0932\u093e \u092f\u0947\u0908\u0932.\n\n\u092e\u0940 \u092e\u0930\u093e\u0920\u0940 \u092d\u093e\u0937\u0947\u0924 \u092c\u094b\u0932\u0923\u094d\u092f\u093e\u091a\u093e \u092a\u094d\u0930\u092f\u0924\u094d\u0928 \u0915\u0930\u0924\u094b\u092f, \u092a\u0923 \u092e\u0932\u093e \u0906\u0936\u093e \u0906\u0939\u0947 \u0915\u0940 \u0924\u0941\u092e\u094d\u0939\u0940 \u092e\u093e\u091d\u094d\u092f\u093e \u091a\u0941\u0915\u093e\u0902\u0928\u093e \u092e\u093e\u092b \u0915\u0930\u093e\u0932."
             }
         ]
+    },
+    {
+        "title": "what is the weather?",
+        "messages": [
+            {
+                "role": "user",
+                "content": "what is the weather?"
+            },
+            {
+                "role": "assistant",
+                "content": "I don't have real-time access to current weather conditions. However, I can suggest checking a weather website or app for the most up-to-date information on the weather in your area."
+            },
+            {
+                "role": "user",
+                "content": "weather of pune city right now?"
+            },
+            {
+                "role": "assistant",
+                "content": "I don't have real-time access to current weather conditions. However, I can suggest checking a weather website or app such as AccuWeather or OpenWeatherMap for the most up-to-date information on the weather in Pune City."
+            },
+            {
+                "role": "user",
+                "content": "write code of c++ for queue."
+            },
+            {
+                "role": "assistant",
+                "content": "```cpp\n#include <iostream>\nusing namespace std;\n\nclass Queue {\n    private:\n        int *arr;\n        int front, rear, capacity, size;\n\n    public:\n        // Constructor to initialize the queue\n        Queue(int capacity) {\n            this->capacity = capacity;\n            this->front = this->rear = -1;\n            this->size = 0;\n            this->arr = new int[capacity];\n        }\n\n        // Function to check if the queue is empty\n        bool isEmpty() {\n            return (size == 0);\n        }\n\n        // Function to check if the queue is full\n        bool isFull() {\n            return (size == capacity);\n        }\n\n        // Function to add an element to the queue\n        void enqueue(int data) {\n            if (isFull()) {\n                cout << \"Queue is full. Cannot add more elements.\" << endl;\n                return;\n            }\n            if (isEmpty()) {\n                front = rear = 0;\n                arr[rear] = data;\n            } else {\n                rear = (rear + 1) % capacity;\n                arr[rear] = data;\n            }\n            size++;\n        }\n\n        // Function to remove an element from the queue\n        int dequeue() {\n            if (isEmpty()) {\n                cout << \"Queue is empty. Cannot remove elements.\" << endl;\n                return -1;\n            }\n            int temp = arr[front];\n            if (front == rear) {\n                front = rear = -1;\n            } else {\n                front = (front + 1) % capacity;\n            }\n            size--;\n            return temp;\n        }\n\n        // Function to get the front element of the queue\n        int getFront() {\n            if (isEmpty()) {\n                cout << \"Queue is empty.\" << endl;\n                return -1;\n            }\n            return arr[front];\n        }\n\n        // Function to get the rear element of the queue\n        int getRear() {\n            if (isEmpty()) {\n                cout << \"Queue is empty.\" << endl;\n                return -1;\n            }\n            return arr[rear];\n        }\n\n        // Function to print the queue\n        void printQueue() {\n            if (isEmpty()) {\n                cout << \"Queue is empty.\" << endl;\n                return;\n            }\n            int temp = front;\n            for (int i = 0; i < size; i++) {\n                cout << arr[temp] << \" \";\n                temp = (temp + 1) % capacity;\n            }\n            cout << endl;\n        }\n};\n\nint main() {\n    Queue q(5);\n    q.enqueue(1);\n    q.enqueue(2);\n    q.enqueue(3);\n    q.enqueue(4);\n    q.enqueue(5);\n    q.printQueue();  // Output: 1 2 3 4 5\n    cout << q.getFront() << endl;  // Output: 1\n    cout << q.getRear() << endl;  // Output: 5\n    q.dequeue();\n    q.printQueue();  // Output: 2 3 4 5\n    return 0;\n}\n```"
+            }
+        ]
+    },
+    {
+        "title": "who is the ceo of nvidia.",
+        "messages": [
+            {
+                "role": "user",
+                "content": "who is the ceo of nvidia."
+            },
+            {
+                "role": "assistant",
+                "content": "The CEO of NVIDIA is Jensen Huang. He has been the CEO since 1993, when he co-founded the company."
+            },
+            {
+                "role": "user",
+                "content": "Hi"
+            },
+            {
+                "role": "assistant",
+                "content": "Hello, is there something I can help you with?"
+            },
+            {
+                "role": "user",
+                "content": "Hello, how are you?",
+                "timestamp": "2026-05-05T02:47:41.367615"
+            },
+            {
+                "role": "assistant",
+                "content": "**Hello**: I'm doing well, thank you for asking. I'm a large language model, so I don't have feelings or emotions like humans do, but I'm functioning properly and ready to assist you. \n\n**How can I help you today?** Do you have a specific question, topic you'd like to discuss, or need help with something?",
+                "timestamp": "2026-05-05T02:47:41.367627"
+            },
+            {
+                "role": "user",
+                "content": "What is Python?",
+                "timestamp": "2026-05-05T02:47:42.635497"
+            },
+            {
+                "role": "assistant",
+                "content": "**Python Overview**\n====================\n\nPython is a:\n* **High-level programming language**: Easy to read and write, with a focus on code readability.\n* **Interpreted language**: Code is executed line by line, without the need for compilation.\n* **General-purpose language**: Can be used for various applications, such as:\n\t+ Web development\n\t+ Data analysis and science\n\t+ Artificial intelligence and machine learning\n\t+ Automation and scripting\n\t+ Game development\n\n**Key Features**\n---------------\n\n* **Simple syntax**: Easy to learn and use, with a focus on readability.\n* **Large standard library**: Includes modules for various tasks, such as file I/O, networking, and data structures.\n* **Cross-platform**: Can run on multiple operating systems, including Windows, macOS, and Linux.\n* **Extensive community**: Large and active community, with many resources available for learning and troubleshooting.\n\n**Use Cases**\n-------------\n\n* **Data analysis and science**: Popular libraries like NumPy, pandas, and scikit-learn make Python a top choice for data analysis and science.\n* **Web development**: Frameworks like Django and Flask make it easy to build web applications.\n* **Automation and scripting**: Python's easy-to-use syntax and extensive library make it a great choice for automating tasks and scripting.\n\nIf you're interested in learning more about Python or have specific questions, feel free to ask.",
+                "timestamp": "2026-05-05T02:47:42.635508"
+            },
+            {
+                "role": "user",
+                "content": "Current time and date",
+                "timestamp": "2026-05-05T02:47:42.792030"
+            },
+            {
+                "role": "assistant",
+                "content": "**Current Time and Date:**\n- Date: Tuesday, 05 May 2026\n- Time: 02:47:42",
+                "timestamp": "2026-05-05T02:47:42.792039"
+            },
+            {
+                "role": "user",
+                "content": "Hello, how are you?",
+                "timestamp": "2026-05-05T02:49:07.887387"
+            },
+            {
+                "role": "assistant",
+                "content": "**Hello**: I'm doing well, thank you for asking. I'm a large language model, so I don't have emotions or feelings like humans do, but I'm functioning properly and ready to assist you with any questions or tasks you may have.\n\nHow can I help you today?",
+                "timestamp": "2026-05-05T02:49:07.887399"
+            },
+            {
+                "role": "user",
+                "content": "What is Python?",
+                "timestamp": "2026-05-05T02:49:08.675789"
+            },
+            {
+                "role": "assistant",
+                "content": "**Python Overview**\n====================\n\nPython is a:\n* **High-level programming language**\n* **Interpreted language**, meaning code is executed line by line\n* **Multi-paradigm language**, supporting object-oriented, imperative, and functional programming styles\n\n**Key Features**\n---------------\n\n* **Easy to learn**: Simple syntax and readability make Python a great language for beginners\n* **Versatile**: Used in various domains, such as:\n\t+ Web development\n\t+ Data analysis and science\n\t+ Artificial intelligence and machine learning\n\t+ Automation and scripting\n\t+ Education and research\n* **Large community**: Active and supportive community, with numerous libraries and frameworks available\n\n**Common Use Cases**\n--------------------\n\n* **Data analysis and visualization**: Popular libraries like Pandas, NumPy, and Matplotlib make data analysis and visualization easy\n* **Web development**: Frameworks like Django and Flask enable rapid web application development\n* **Automation**: Python's simplicity and flexibility make it a great choice for automating tasks and workflows\n\nIf you're interested in learning more about Python or have specific questions, feel free to ask.",
+                "timestamp": "2026-05-05T02:49:08.675796"
+            },
+            {
+                "role": "user",
+                "content": "Current time and date",
+                "timestamp": "2026-05-05T02:49:09.153629"
+            },
+            {
+                "role": "assistant",
+                "content": "**Current Time and Date:**\n- Day: Tuesday\n- Date: 05 May 2026\n- Time: 02:49:08",
+                "timestamp": "2026-05-05T02:49:09.153634"
+            },
+            {
+                "role": "user",
+                "content": "Hello, how are you?",
+                "timestamp": "2026-05-05T03:12:07.356479"
+            },
+            {
+                "role": "assistant",
+                "content": "**Hello.** I'm doing well, thank you for asking. I'm a large language model, so I don't have feelings or emotions like humans do, but I'm functioning properly and ready to assist you. \n\nIs there something I can help you with today, or would you like to chat?",
+                "timestamp": "2026-05-05T03:12:07.356493"
+            },
+            {
+                "role": "user",
+                "content": "What is Python?",
+                "timestamp": "2026-05-05T03:12:08.105757"
+            },
+            {
+                "role": "assistant",
+                "content": "**Python Overview**\n====================\n\nPython is a:\n* **High-level programming language**: Easy to read and write, with a focus on simplicity and readability.\n* **Interpreted language**: Code is executed line by line, without the need for compilation.\n* **Multi-paradigm language**: Supports object-oriented, imperative, and functional programming styles.\n\n**Key Features**\n---------------\n\n* **Easy to learn**: Simple syntax and forgiving nature make it a great language for beginners.\n* **Versatile**: Can be used for web development, data analysis, machine learning, automation, and more.\n* **Large community**: Active and supportive community, with many libraries and frameworks available.\n\n**Common Use Cases**\n--------------------\n\n* **Web development**: Frameworks like Django and Flask make it easy to build web applications.\n* **Data analysis**: Libraries like Pandas and NumPy provide efficient data manipulation and analysis tools.\n* **Machine learning**: Popular libraries like TensorFlow and scikit-learn make it easy to build and train models.\n\n**Getting Started**\n-------------------\n\nIf you're interested in learning Python, I can provide resources and guidance to help you get started. Would you like some recommendations for tutorials, books, or online courses?",
+                "timestamp": "2026-05-05T03:12:08.105774"
+            },
+            {
+                "role": "user",
+                "content": "Current time and date",
+                "timestamp": "2026-05-05T03:12:08.386894"
+            },
+            {
+                "role": "assistant",
+                "content": "**Current Time and Date:**\n- Day: Tuesday\n- Date: 05 May 2026\n- Time: 03:12:08",
+                "timestamp": "2026-05-05T03:12:08.386901"
+            },
+            {
+                "role": "user",
+                "content": "Hello, how are you?",
+                "timestamp": "2026-05-05T09:44:50.855450"
+            },
+            {
+                "role": "assistant",
+                "content": "**Hello**: I'm doing well, thank you for asking. I'm a large language model, so I don't have feelings or emotions like humans do, but I'm functioning properly and ready to assist you with any questions or tasks you may have.\n\n**How can I help you today?**",
+                "timestamp": "2026-05-05T09:44:50.855456"
+            },
+            {
+                "role": "user",
+                "content": "What is Python?",
+                "timestamp": "2026-05-05T09:44:51.583180"
+            },
+            {
+                "role": "assistant",
+                "content": "**Python Overview**\n====================\n\nPython is a:\n* **High-level programming language**\n* **Interpreted language**, meaning code is executed line by line\n* **General-purpose language**, suitable for various applications, including:\n\t+ Web development\n\t+ Data analysis and science\n\t+ Artificial intelligence and machine learning\n\t+ Automation and scripting\n\t+ Education and research\n\n**Key Features**\n---------------\n\n* **Easy to learn**: Simple syntax and concise code\n* **Cross-platform**: Runs on multiple operating systems, including Windows, macOS, and Linux\n* **Large community**: Extensive libraries, frameworks, and resources available\n* **Dynamic typing**: Variables do not require explicit type definitions\n\n**Use Cases**\n-------------\n\n* **Web development**: Frameworks like Django and Flask\n* **Data science**: Libraries like NumPy, pandas, and scikit-learn\n* **Automation**: Scripting tasks, such as data processing and file management\n* **Education**: Introduction to programming and computer science concepts\n\nIf you're interested in learning more about Python or have specific questions, feel free to ask.",
+                "timestamp": "2026-05-05T09:44:51.583188"
+            },
+            {
+                "role": "user",
+                "content": "Current time and date",
+                "timestamp": "2026-05-05T09:44:51.842367"
+            },
+            {
+                "role": "assistant",
+                "content": "**Current Time and Date:**\n- Date: 2026-05-05 (Tuesday, May 5, 2026)\n- Time: 09:44:51",
+                "timestamp": "2026-05-05T09:44:51.842377"
+            },
+            {
+                "role": "user",
+                "content": "write a code for implementing basic chatbot using rag pipelines and langchain make sure that it handles the hellucinations.",
+                "timestamp": "2026-05-05T10:26:42.028931"
+            },
+            {
+                "role": "assistant",
+                "content": "**Implementing a Basic Chatbot using RAG Pipelines and LangChain**\n====================================================================\n\nIn this example, we will create a basic chatbot using RAG (Retrieve, Augment, Generate) pipelines and LangChain. We will also handle hallucinations, which are instances where the model generates information that is not present in the input data.\n\n**Prerequisites**\n---------------\n\n* Python 3.8+\n* `transformers` library\n* `langchain` library\n* `torch` library\n\n**Code**\n------\n```python\nimport torch\nfrom transformers import AutoModelForSeq2SeqLM, AutoTokenizer\nfrom langchain import LLMChain, PromptTemplate\nfrom langchain.chains.question_answering import load_qa_chain\nfrom langchain.llms import HuggingFaceHub\n\n# Load pre-trained model and tokenizer\nmodel_name = \"t5-base\"\nmodel = AutoModelForSeq2SeqLM.from_pretrained(model_name)\ntokenizer = AutoTokenizer.from_pretrained(model_name)\n\n# Define the prompt template\ntemplate = PromptTemplate(\n    input_variables=[\"input_text\"],\n    template=\"You are a chatbot. Respond to the following message: {input_text}\",\n)\n\n# Create the LLM chain\nllm = HuggingFaceHub(repo_id=model_name, max_tokens=512)\nchain = LLMChain(llm=llm, prompt=template)\n\n# Define a function to handle hallucinations\ndef handle_hallucinations(input_text, response):\n    # Check if the response contains any information that is not present in the input text\n    for word in response.split():\n        if word not in input_text:\n            # If the response contains new information, return a warning message\n            return \"I'm not sure about that. Can you please provide more context?\"\n    return response\n\n# Define the chatbot function\ndef chatbot(input_text):\n    # Use the LLM chain to generate a response\n    response = chain({\"input_text\": input_text})\n    # Handle hallucinations\n    response = handle_hallucinations(input_text, response)\n    return response\n\n# Test the chatbot\ninput_text = \"Hello, how are you?\"\nresponse = chatbot(input_text)\nprint(response)\n```\n\n**Explanation**\n-------------\n\n1. We load a pre-trained T5 model and tokenizer using the `transformers` library.\n2. We define a prompt template using the `langchain` library, which will be used to generate responses to user input.\n3. We create an LLM chain using the `langchain` library, which will be used to generate responses to user input.\n4. We define a function `handle_hallucinations` to check if the response contains any information that is not present in the input text. If it does, we return a warning message.\n5. We define the chatbot function, which uses the LLM chain to generate a response to user input and then handles hallucinations using the `handle_hallucinations` function.\n6. We test the chatbot by passing in a sample input text and printing the response.\n\n**Example Use Cases**\n--------------------\n\n* User input: \"What is the capital of France?\"\n* Response: \"The capital of France is Paris.\"\n* User input: \"What is the capital of France? I think it's Berlin.\"\n* Response: \"I'm not sure about that. Can you please provide more context?\" (because the response contains new information that is not present in the input text)\n\nNote: This is a basic example, and you may want to fine-tune the model and adjust the prompt template to improve the chatbot's performance. Additionally, you can use more advanced techniques to handle hallucinations, such as using fact-checking APIs or knowledge graphs.",
+                "timestamp": "2026-05-05T10:26:42.028936"
+            },
+            {
+                "role": "user",
+                "content": "hi.",
+                "timestamp": "2026-05-05T10:26:53.823840"
+            },
+            {
+                "role": "assistant",
+                "content": "Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?",
+                "timestamp": "2026-05-05T10:26:53.823846"
+            }
+        ]
+    },
+    {
+        "title": "write basic c++ code to demonstrate string reverse.",
+        "messages": [
+            {
+                "role": "user",
+                "content": "write basic c++ code to demonstrate string reverse.",
+                "timestamp": "2026-05-05T10:28:04.451439"
+            },
+            {
+                "role": "assistant",
+                "content": "**String Reverse in C++**\n=========================\n\n### Description\n\nThis C++ code demonstrates a simple function to reverse a given string.\n\n### Code\n```cpp\n#include <iostream>\n#include <string>\n\n// Function to reverse a string\nstd::string reverseString(const std::string& str) {\n    std::string reversedStr = str;\n    int left = 0;\n    int right = str.length() - 1;\n\n    while (left < right) {\n        // Swap characters at left and right indices\n        char temp = reversedStr[left];\n        reversedStr[left] = reversedStr[right];\n        reversedStr[right] = temp;\n\n        // Move towards the center\n        left++;\n        right--;\n    }\n\n    return reversedStr;\n}\n\nint main() {\n    // Example usage\n    std::string originalStr = \"Hello, World!\";\n    std::cout << \"Original String: \" << originalStr << std::endl;\n\n    std::string reversedStr = reverseString(originalStr);\n    std::cout << \"Reversed String: \" << reversedStr << std::endl;\n\n    return 0;\n}\n```\n\n### Explanation\n\n1. The `reverseString` function takes a `const std::string&` as input and returns the reversed string.\n2. It uses a two-pointer approach, starting from the beginning and end of the string, and swaps characters until the pointers meet in the middle.\n3. In the `main` function, we demonstrate the usage of `reverseString` with an example string.\n\n### Output\n\n```\nOriginal String: Hello, World!\nReversed String: !dlroW ,olleH\n```",
+                "timestamp": "2026-05-05T10:28:04.451443"
+            },
+            {
+                "role": "user",
+                "content": "Hello, how are you?",
+                "timestamp": "2026-05-05T19:03:53.248810"
+            },
+            {
+                "role": "assistant",
+                "content": "**I'm doing well, thank you for asking.** I'm a large language model, so I don't have feelings or emotions like humans do, but I'm functioning properly and ready to assist you with any questions or tasks you may have. \n\nIs there something specific you'd like to know or discuss? I'm here to help.",
+                "timestamp": "2026-05-05T19:03:53.248816"
+            },
+            {
+                "role": "user",
+                "content": "What is Python?",
+                "timestamp": "2026-05-05T19:03:56.555335"
+            },
+            {
+                "role": "assistant",
+                "content": "**Python Overview**\n====================\n\nPython is a:\n* **High-level programming language**: Easy to read and write, with a focus on simplicity and readability.\n* **Interpreted language**: Code is executed line by line, without the need for compilation.\n* **Multi-paradigm language**: Supports object-oriented, imperative, and functional programming styles.\n\n**Key Features**\n---------------\n\n* **Easy to learn**: Simple syntax and concise code make it a great language for beginners.\n* **Versatile**: Can be used for web development, data analysis, artificial intelligence, automation, and more.\n* **Large community**: Active and supportive community, with many libraries and frameworks available.\n* **Cross-platform**: Can run on multiple operating systems, including Windows, macOS, and Linux.\n\n**Common Use Cases**\n--------------------\n\n* **Web development**: Frameworks like Django and Flask make it easy to build web applications.\n* **Data analysis and science**: Libraries like NumPy, pandas, and scikit-learn provide efficient data processing and analysis tools.\n* **Artificial intelligence and machine learning**: TensorFlow, Keras, and PyTorch are popular libraries for building AI and ML models.\n* **Automation**: Can be used to automate tasks, such as data entry, file management, and system administration.\n\n**Getting Started**\n------------------\n\nIf you're interested in learning Python, I recommend:\n1. **Installing Python**: Download and install the latest version from the official Python website.\n2. **Choosing a IDE**: Select a code editor or IDE, such as PyCharm, Visual Studio Code, or Spyder.\n3. **Online resources**: Explore online tutorials, documentation, and courses to start learning Python.",
+                "timestamp": "2026-05-05T19:03:56.555343"
+            },
+            {
+                "role": "user",
+                "content": "Current time and date",
+                "timestamp": "2026-05-05T19:03:56.930129"
+            },
+            {
+                "role": "assistant",
+                "content": "**Current Time and Date:**\n- Day: Tuesday\n- Date: 05 May 2026\n- Time: 19:03:56",
+                "timestamp": "2026-05-05T19:03:56.930140"
+            },
+            {
+                "role": "user",
+                "content": "Hello, how are you?",
+                "timestamp": "2026-05-05T19:07:44.353813"
+            },
+            {
+                "role": "assistant",
+                "content": "**Hello.** I'm doing well, thank you for asking. I'm a large language model, so I don't have feelings or emotions like humans do, but I'm functioning properly and ready to assist you with any questions or tasks you may have.\n\nIs there something specific you'd like to talk about or ask for help with? I'm here to provide information, answer questions, and offer suggestions to the best of my abilities.",
+                "timestamp": "2026-05-05T19:07:44.353819"
+            },
+            {
+                "role": "user",
+                "content": "What is Python?",
+                "timestamp": "2026-05-05T19:07:45.325921"
+            },
+            {
+                "role": "assistant",
+                "content": "**Python Overview**\n====================\n\nPython is a:\n* **High-level programming language**: Easy to read and write, with a focus on code readability.\n* **Interpreted language**: Code is executed line by line, without the need for compilation.\n* **Multi-paradigm language**: Supports object-oriented, imperative, and functional programming styles.\n\n**Key Features**\n---------------\n\n* **Easy to learn**: Simple syntax and forgiving nature make it a great language for beginners.\n* **Versatile**: Can be used for web development, data analysis, artificial intelligence, scientific computing, and more.\n* **Large community**: Active and supportive community, with many libraries and frameworks available.\n\n**Common Use Cases**\n--------------------\n\n* **Web development**: Frameworks like Django and Flask make it easy to build web applications.\n* **Data analysis**: Libraries like Pandas and NumPy provide efficient data manipulation and analysis tools.\n* **Artificial intelligence**: TensorFlow and Keras are popular libraries for building AI and machine learning models.\n\n**Getting Started**\n-------------------\n\nIf you're interested in learning Python, I recommend:\n1. **Checking out online resources**: Websites like Codecademy, DataCamp, and Python.org offer interactive tutorials and courses.\n2. **Installing a Python IDE**: Integrated development environments like PyCharm, Visual Studio Code, or Spyder can help you write and run Python code.\n3. **Practicing with projects**: Start with simple projects, like command-line tools or games, to build your skills and confidence.",
+                "timestamp": "2026-05-05T19:07:45.325926"
+            },
+            {
+                "role": "user",
+                "content": "Current time and date",
+                "timestamp": "2026-05-05T19:07:45.625749"
+            },
+            {
+                "role": "assistant",
+                "content": "**Current Time and Date:**\n- Day: Tuesday\n- Date: 05 May 2026\n- Time: 19:07:45",
+                "timestamp": "2026-05-05T19:07:45.625755"
+            },
+            {
+                "role": "user",
+                "content": "hi.",
+                "timestamp": "2026-05-05T19:16:15.566931"
+            },
+            {
+                "role": "assistant",
+                "content": "Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?",
+                "timestamp": "2026-05-05T19:16:15.566940"
+            }
+        ]
     }
 ]

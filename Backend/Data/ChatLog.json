@@ -1,0 +1,22 @@
+[
+    {
+        "role": "user",
+        "content": "Hi , who is Salman Khan?",
+        "timestamp": "2026-05-05T02:55:36.998243"
+    },
+    {
+        "role": "assistant",
+        "content": "**Salman Khan** is a prominent Indian film actor, producer, and television personality. He is one of the most popular and highest-paid actors in Indian cinema.\n\n**Key Facts:**\n\n* Born: December 27, 1965, in Indore, India\n* Active in the film industry since: 1988\n* Known for: His roles in Bollywood films, such as \"Maine Pyar Kiya\", \"Hum Aapke Hain Koun..!\", and \"Dabangg\"\n* Awards: Numerous awards, including several Filmfare Awards\n\nSalman Khan is also known for his philanthropic work, particularly through his charitable organization, **Being Human Foundation**, which focuses on education, healthcare, and disaster relief.",
+        "timestamp": "2026-05-05T02:55:36.998250"
+    },
+    {
+        "role": "user",
+        "content": "Hi",
+        "timestamp": "2026-05-05T03:09:31.230724"
+    },
+    {
+        "role": "assistant",
+        "content": "Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?",
+        "timestamp": "2026-05-05T03:09:31.230730"
+    }
+]

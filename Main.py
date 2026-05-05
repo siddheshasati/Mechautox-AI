@@ -30,7 +30,6 @@ import os
 import re
 import sys
 
-# --- Setup ---
 env_vars = dotenv_values(".env")
 Username = env_vars.get("Username")
 Assistantname = env_vars.get("Assistantname")
@@ -60,7 +59,7 @@ def HandleQuickAction(Query):
         return False
     if NormalizeQuickAction(Query) == "take my interview":
         SetSayAloudStatus("True")
-    ShowTextToScreen(f"{Assistantname} : {reply}")
+    ShowTextToScreen(f"{reply}")
     SetAssistantStatus("Waiting...")
     SpeakIfAllowed(reply)
     return True
@@ -91,7 +90,7 @@ def HandleImageGenerationRequest(Query):
     SetAssistantStatus("Generating...")
     with open(TempDirectoryPath("ImageGeneration.data"), "w", encoding="utf-8") as file:
         file.write(f"{final_prompt},True")
-    ShowTextToScreen(f"{Assistantname} : Generating image for: {final_prompt}")
+    ShowTextToScreen(f"Generating image for: {final_prompt}")
     print(f"--- Triggered Image Gen for: {final_prompt} ---")
     return True
 
@@ -120,7 +119,7 @@ def HandleUploadedQuestion(Query):
     Answer = answer_question_about_upload(Query)
     if not Answer:
         return False
-    ShowTextToScreen(f"{Assistantname} : {Answer}")
+    ShowTextToScreen(f"{Answer}")
     SetAssistantStatus("Answering...")
     SpeakIfAllowed(Answer)
     return True
@@ -140,7 +139,7 @@ def HandleFileUpload():
             return False
         SetAssistantStatus("Analyzing upload...")
         Answer = process_uploaded_file(path)
-        ShowTextToScreen(f"{Assistantname} : {Answer}")
+        ShowTextToScreen(f"{Answer}")
         SetAssistantStatus("Ready...")
         SpeakIfAllowed(Answer)
         return True
@@ -200,20 +199,17 @@ InitialExecution()
 
 def MainExecution(Query=None):
     try:
-        # --- Initialization (Fixes the UnboundLocalError) ---
         TaskExecution = False
         ImageExecution = False
         ImageGenerationQuery = ""
-        
-        # 1. Input Handling
+
         if Query is None:
             SetAssistantStatus("Listening...")
-            # Check for typed data first to prioritize manual input
             typed_path = TempDirectoryPath("TypedQuery.data")
             if os.path.exists(typed_path):
                 with open(typed_path, "r", encoding="utf-8") as f:
                     Query = f.read().strip()
-                try: os.remove(typed_path) # Clean up immediately
+                try: os.remove(typed_path)
                 except: pass
             else:
                 Query = SpeechRecognition()
@@ -230,16 +226,12 @@ def MainExecution(Query=None):
             return True
 
         SetAssistantStatus("Thinking...")
-        
-        # 2. Decision Making
         Decision = FirstLayerDMM(Query)
         if not Decision:
             return False
-        
         print(f"\nDecision : {Decision}\n")
-        
-        # 3. Handle Image Generation Trigger
-        for queries in Decision:
+
+        for queries in Decision:  # Img gen worker
             if "generate " in queries.lower():
                 ImageGenerationQuery = queries.lower().replace("generate ", "").replace("image ", "").strip()
                 ImageExecution = True
@@ -253,12 +245,11 @@ def MainExecution(Query=None):
                 if any(queries.startswith(func) for func in Functions):
                     run(Automation(list(Decision)))
                     TaskExecution = True
-        
+
         # 5. Handle General/Realtime Responses
         G = any([i for i in Decision if i.startswith("general")])
         R = any([i for i in Decision if i.startswith("realtime")])
         Merged_query = " and ".join([" ".join(i.split()[1:]) for i in Decision if i.startswith("general") or i.startswith("realtime")])
-        
         if R or (G and R):
             SetAssistantStatus("Searching...")
             Answer = RealtimeSearchEngine(QueryModifier(Merged_query))
@@ -281,13 +272,12 @@ def MainExecution(Query=None):
                     ShowTextToScreen(f"{Assistantname} : {Answer}")
                     SpeakIfAllowed(Answer)
                     os._exit(1)
-    
+
     except Exception as e:
         print(f"Error in Execution Logic: {e}")
         SetAssistantStatus("Error...")
         return False
 
-# Simple wrapper for the Thread logic
 def MainExecutionTyped(Query):
     return MainExecution(Query)
 
@@ -302,16 +292,16 @@ def FirstThread():
 
         elif CurrentStatus == "Typed":
             query = ""
-            # Use 'with' to ensure the file is closed immediately after reading
+
             try:
                 with open(TempDirectoryPath("TypedQuery.data"), "r", encoding="utf-8") as f:
                     query = f.read().strip()
-                
+
                 if query:
                     MainExecutionTyped(query)
             except Exception as e:
                 print(f"File Read Error: {e}")
-            
+
             SetMicrophoneStatus("False")
 
         elif CurrentStatus == "Upload":
@@ -324,16 +314,14 @@ def SecondThread():
     GraphicalUserInterface()
 
 if __name__ == "__main__":
-    # --- Start Image Generation Engine as a single background process ---
     try:
-        # This starts the second script immediately when main.py runs
         subprocess.Popen([sys.executable, r'Backend\ImageGeneration.py'], shell=False)
         print(">> Image Generation Engine Started Successfully.")
     except Exception as e:
         print(f">> Failed to start Image Gen Engine: {e}")
 
-    # --- Start Assistant Logic Threads ---
+
     thread1 = threading.Thread(target=FirstThread, daemon=True)
     thread1.start()
-    
+
     SecondThread()

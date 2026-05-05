@@ -9,21 +9,16 @@ import json
 import html
 import re
 
-# Get absolute path of GUI.py
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Go one level up (project root: Assissant)
 project_root = os.path.dirname(current_dir)
 
-# Add project root to Python path
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-# Now import from Backend
 from Backend.SpeechToText import QueryModifier
 
 
-# Configuration
 env_vars = dotenv_values(".env")
 Assistantname = env_vars.get("Assistantname", "MechautoX")
 Username = env_vars.get("Username", "Siddhesh Asati")
@@ -33,7 +28,6 @@ TempDirPath = rf"{current_dir}\Frontend\Files"
 GraphicsDirPath = rf"{current_dir}\Frontend\Graphics"
 ChatSessionsPath = rf"{current_dir}\Data\ChatSessions.json"
 
-# --- Utility Functions ---
 def GraphicsDirectoryPath(Filename): return rf'{GraphicsDirPath}\{Filename}'
 def TempDirectoryPath(Filename): return rf'{TempDirPath}\{Filename}'
 
@@ -58,8 +52,6 @@ def GetSayAloudStatus():
             return file.read().strip()
     except:
         return "False"
-
-# --- UI Components ---
 
 class PromptInput(QTextEdit):
     submitted = pyqtSignal()
@@ -172,7 +164,6 @@ class ChatSection(QWidget):
         header.addWidget(self.say_aloud_btn)
         self.update_say_aloud_button()
         layout.addLayout(header)
-        
         self.chat_text_edit = QTextEdit()
         self.chat_text_edit.setObjectName("ChatTranscript")
         self.chat_text_edit.setReadOnly(True)
@@ -243,13 +234,11 @@ class ChatSection(QWidget):
         status_bar = QHBoxLayout()
         self.label = QLabel("STATUS: INITIALIZING...")
         self.label.setStyleSheet("color: #8bdcff; font-size: 14px; font-weight: 700;")
-        
         self.gif_label = QLabel()
         movie = QMovie(GraphicsDirectoryPath('Jarvis.gif'))
         movie.setScaledSize(QSize(96, 56))
         self.gif_label.setMovie(movie)
         movie.start()
-        
         status_bar.addWidget(self.label)
         status_bar.addStretch()
         status_bar.addWidget(self.gif_label)
@@ -281,11 +270,9 @@ class ChatSection(QWidget):
         self.mic_chat_btn.setFixedSize(64, 64)
         self.mic_chat_btn.setCursor(Qt.PointingHandCursor)
         self.mic_chat_btn.clicked.connect(self.toggle_mic_local)
-        
         self.type_input = PromptInput()
         self.type_input.setObjectName("PromptInput")
         self.type_input.submitted.connect(self.handle_typing)
-        
         self.send_btn = QPushButton("SEND")
         self.send_btn.setFixedSize(118, 64)
         self.send_btn.setCursor(Qt.PointingHandCursor)
@@ -303,7 +290,6 @@ class ChatSection(QWidget):
             }
         """)
         self.send_btn.clicked.connect(self.handle_typing)
-        
         self.input_layout.addWidget(self.upload_btn)
         self.input_layout.addWidget(self.mic_chat_btn)
         self.input_layout.addWidget(self.type_input)
@@ -422,7 +408,10 @@ class ChatSection(QWidget):
                 with open(path, "r", encoding='utf-8') as file:
                     messages = file.read().strip()
                     if messages and old_chat_message != messages:
-                        self.addMessage(f"{Assistantname}: {messages}", '#00d4ff')
+                        # Strip duplicate assistant name if it exists
+                        if messages.startswith(f"{Assistantname}: {Assistantname}:"):
+                            messages = f"{Assistantname}: " + messages.replace(f"{Assistantname}: {Assistantname}: ", "")
+                        self.addMessage(messages, '#00d4ff')
                         old_chat_message = messages
         except: pass
 
@@ -565,7 +554,7 @@ class ChatSection(QWidget):
         query = self.type_input.toPlainText().strip()
         if query:
             query = QueryModifier(query)
-            self.addMessage(f"{Username}: {query}", "#ffffff")
+            # self.addMessage(f"{Username}: {query}", "#ffffff")  # Don't show user query on chat screen
             try:
                 with open(TempDirectoryPath("TypedQuery.data"), "w", encoding="utf-8") as file:
                     file.write(query)
@@ -823,11 +812,10 @@ class MainWindow(QMainWindow):
             }
         """)
         side_layout.addWidget(self.history_list)
-        
         self.sidebar_ani = QPropertyAnimation(self.sidebar, b"geometry")
         self.sidebar_open = False
 
-        # --- Content ---
+
         stacked = QStackedWidget()
         home = QWidget()
         home.setStyleSheet("background-color: #05070d;")
@@ -873,7 +861,7 @@ class MainWindow(QMainWindow):
             self.sidebar_ani.setEndValue(QRect(0, 72, 360, self.height()))
             self.sidebar_open = True
             self.sidebar.raise_()
-        
+
         self.sidebar_ani.setDuration(300)
         self.sidebar_ani.setEasingCurve(QEasingCurve.OutQuint)
         self.sidebar_ani.start()
@@ -899,9 +887,7 @@ class MainWindow(QMainWindow):
         for i in range(self.history_list.count()):
             item = self.history_list.item(i)
             item.setHidden(text.lower() not in item.text().lower())
-            
-    # Add these to the BOTTOM of Frontend/GUI.py
-# --- Bridge Functions for Main.py ---
+
 
 def InitializeEnvironment():
     """Creates necessary directories and files if they don't exist."""
@@ -916,7 +902,6 @@ def InitializeEnvironment():
 
 def AnswerModifier(Text):
     """Clean up the assistant's response for better display."""
-    # Removes extra spaces, lines, or specific patterns if needed
     return Text.strip()
 
 def QueryModifier(Query):

@@ -2,7 +2,6 @@ import cohere
 from rich import print
 from dotenv import dotenv_values
 
-# Load environment variables
 env_vars = dotenv_values('.env')
 CohereAPIKey = env_vars.get("CohereAPIKey")
 
@@ -35,7 +34,7 @@ You will decide whether a query is a 'general' query, a 'realtime' query, or is 
 -> Respond with 'google search (topic)' if a query is asking to search a specific topic on google but if the query is asking to search multiple topics on google, respond with 'google search 1st topic, google search 2nd topic' and so on.
 -> Respond with 'youtube search (topic)' if a query is asking to search a specific topic on youtube but if the query is asking to search multiple topics on youtube, respond with 'youtube search 1st topic, youtube search 2nd topic' and so on.
 *** If the query is asking to perform multiple tasks like 'open facebook, telegram and close whatsapp' respond with 'open facebook, open telegram, close whatsapp' ***
-*** If the user is saying goodbye or wants to end the conversation like 'bye jarvis.' respond with 'exit'.***
+*** If the user is saying goodbye or wants to end the conversation like 'bye MechautoX.' respond with 'exit'.***
 *** Respond with 'general (query)' if you can't decide the kind of query or if a query is asking to perform a task which is not mentioned above. ***
 """
 
@@ -60,31 +59,27 @@ def FirstLayerDMM(prompt: str = "test"):
 
         for event in stream:
             if event.event_type == "text-generation":
-                response += event.text  
-        
-        # Debugging: Print Raw Response
+                response += event.text
+
         print(f"[bold blue]Raw Response:[/bold blue] {response}")
 
-        # Clean and process the response
+
         response = response.replace("\n", "").split(",")
         response = [i.strip().lower() for i in response]
 
-        # Ensure output follows the format "general hello."
         temp = []
         for task in response:
             for func in funcs:
                 if task.startswith(func):
-                    if "general" in task:  # Ensuring proper formatting
+                    if "general" in task:
                         if not task.endswith("."):
                             task += "."
                     temp.append(task)
 
-        # Handle errors without infinite recursion
         if "(query)" in temp:
             print("[bold red]Error: Unclear classification.[/bold red]")
             return ["general (unclear)."]
 
-        # Update chat history with the response
         ChatHistory.append({"role": "Chatbot", "message": ", ".join(temp)})
 
         return temp

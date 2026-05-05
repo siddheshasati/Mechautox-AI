@@ -6,7 +6,6 @@ import mtranslate as mt
 from dotenv import dotenv_values
 from time import sleep
 
-# Load environment variables with a fallback to English if missing
 env_vars = dotenv_values(".env")
 InputLanguage = env_vars.get("InputLanguage", "en")
 
@@ -47,10 +46,8 @@ HtmlCode = '''<!DOCTYPE html>
 </body>
 </html>'''
 
-# Inject the input language into the JS
 HtmlCode = HtmlCode.replace("recognition.lang='';", f"recognition.lang='{InputLanguage}';")
 
-# Ensure Data directory exists to prevent FileNotFoundError
 os.makedirs("Data", exist_ok=True)
 
 with open(r"Data\Voice.html", "w", encoding="utf-8") as f:
@@ -63,14 +60,11 @@ chrome_options = Options()
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.142.86 Safari/537.36"
 chrome_options.add_argument(f'user-agent={user_agent}')
 
-# Auto-allows microphone permission without a popup
 chrome_options.add_argument("--use-fake-ui-for-media-stream") 
 
-# Hack to hide the window off-screen without triggering headless audio restrictions
 chrome_options.add_argument("--window-position=-2000,0") 
 chrome_options.add_argument("--window-size=100,100")
 
-# Ensure Frontend/Files directory exists
 TempDirPath = rf"{current_dir}/Frontend/Files"
 os.makedirs(TempDirPath, exist_ok=True)
 
@@ -81,13 +75,12 @@ def SetAssistantStatus(Status):
 def QueryModifier(Query):
     if not Query:
         return ""
-        
+
     new_query = Query.lower().strip()
     query_words = new_query.split()
     question_words = ["how", "what", "who", "where", "when", "whom", "whose", "which", "can", "what's", "where's", "how's", "is", "are"]
 
     is_question = any(new_query.startswith(word + " ") for word in question_words)
-    
     if is_question:
         if query_words[-1][-1] in ['.', '?', '!']:
             new_query = new_query[:-1] + "?"
@@ -103,18 +96,15 @@ def UniversalTranslator(Text):
     english_translation = mt.translate(Text, "en", "auto")
     return english_translation.capitalize()
 
-# ✅ GLOBAL DRIVER VARIABLE (starts empty)
 driver = None
 
 def SpeechRecognition():
     global driver
-    
-    # ✅ LAZY INITIALIZATION: Start Chrome only when this function is actually called
+
     if driver is None:
         print("\n[INFO] Starting Chrome for Speech Recognition...")
         print("[INFO] If this is your first time, Selenium is downloading the Chrome Driver.")
         print("[INFO] PLEASE DO NOT PRESS CTRL+C. Wait 30-60 seconds...\n")
-        
         driver = webdriver.Chrome(options=chrome_options)
         driver.get("file:///" + Link)
 
@@ -131,7 +121,6 @@ def SpeechRecognition():
                     SetAssistantStatus("Translating...")
                     return QueryModifier(UniversalTranslator(Text))
         except Exception:
-            # Prevents overwhelming the socket connection and maxing out CPU
             sleep(0.1)
 
 if __name__ == "__main__":

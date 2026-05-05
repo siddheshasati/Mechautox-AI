@@ -5,22 +5,17 @@ import os
 import re
 import zipfile
 import xml.etree.ElementTree as ET
+import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Optional, Dict, Tuple
 
-try:
-    from dotenv import dotenv_values
-except ImportError:
-    def dotenv_values(path):
-        values = {}
-        if not os.path.exists(path):
-            return values
-        with open(path, "r", encoding="utf-8") as env_file:
-            for line in env_file:
-                line = line.strip()
-                if not line or line.startswith("#") or "=" not in line:
-                    continue
-                key, value = line.split("=", 1)
-                values[key.strip()] = value.strip().strip('"').strip("'")
-        return values
+from dotenv import dotenv_values
+from langchain_core.documents import Document
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
 
 try:
     from groq import Groq
@@ -31,6 +26,13 @@ try:
     from PIL import Image
 except ImportError:
     Image = None
+
+try:
+    from .RAGSystem import LocalRAGSystem
+    RAG_AVAILABLE = True
+except ImportError:
+    RAG_AVAILABLE = False
+    logger.warning("RAGSystem not available. Using legacy mode.")
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -47,10 +49,33 @@ client = Groq(api_key=GroqAPIKey) if Groq and GroqAPIKey else None
 VISION_MODEL = env_vars.get("GroqVisionModel", "meta-llama/llama-4-scout-17b-16e-instruct")
 TEXT_MODEL = env_vars.get("GroqTextModel", "llama-3.3-70b-versatile")
 
+rag_system = None
+if RAG_AVAILABLE:
+    try:
+        rag_system = LocalRAGSystem(groq_api_key=GroqAPIKey)
+        logger.info("RAG system initialized in UploadProcessor")
+    except Exception as e:
+        logger.warning(f"RAG initialization failed: {e}")
 
 def save_upload_context(context):
+    """Save upload context and index to FAISS if RAG available"""
     with open(UPLOAD_CONTEXT_PATH, "w", encoding="utf-8") as file:
         json.dump(context, file, indent=4)
+
+    if rag_system and context.get("text"):
+        try:
+            doc = Document(
+                page_content=context["text"],
+                metadata={
+                    "source": context.get("filename", "uploaded_file"),
+                    "kind": context.get("kind", "document"),
+                    "uploaded_at": datetime.now().isoformat() if 'datetime' in dir() else ""
+                }
+            )
+            result = rag_system.add_documents([doc], context.get("filename", "uploaded_file"))
+            logger.info(f"Indexed to FAISS: {result}")
+        except Exception as e:
+            logger.warning(f"Failed to index to FAISS: {e}")
 
 
 def load_upload_context():
@@ -74,45 +99,67 @@ def clean_text(text):
 
 
 def extract_docx_text(path):
+    """Extract text from DOCX file"""
     paragraphs = []
     namespace = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
-    with zipfile.ZipFile(path) as docx:
-        with docx.open("word/document.xml") as document:
-            tree = ET.parse(document)
-    for paragraph in tree.findall(".//w:p", namespace):
-        parts = [node.text for node in paragraph.findall(".//w:t", namespace) if node.text]
-        if parts:
-            paragraphs.append("".join(parts))
-    return clean_text("\n".join(paragraphs))
-
-
-def extract_pdf_text(path):
     try:
-        from pypdf import PdfReader
-        reader = PdfReader(path)
-        return clean_text("\n".join(page.extract_text() or "" for page in reader.pages))
-    except ImportError:
-        pass
-    try:
-        from PyPDF2 import PdfReader
-        reader = PdfReader(path)
-        return clean_text("\n".join(page.extract_text() or "" for page in reader.pages))
-    except ImportError:
+        with zipfile.ZipFile(path) as docx:
+            with docx.open("word/document.xml") as document:
+                tree = ET.parse(document)
+        for paragraph in tree.findall(".//w:p", namespace):
+            parts = [node.text for node in paragraph.findall(".//w:t", namespace) if node.text]
+            if parts:
+                paragraphs.append("".join(parts))
+        logger.info(f"Extracted text from DOCX: {len(paragraphs)} paragraphs")
+        return clean_text("\n".join(paragraphs))
+    except Exception as e:
+        logger.error(f"Error extracting DOCX: {e}")
         return ""
 
 
+def extract_pdf_text(path):
+    """Extract text from PDF file with multiple library fallbacks"""
+    try:
+        from pypdf import PdfReader
+        reader = PdfReader(path)
+        text = clean_text("\n".join(page.extract_text() or "" for page in reader.pages))
+        logger.info(f"Extracted text from PDF: {len(reader.pages)} pages")
+        return text
+    except ImportError:
+        pass
+    except Exception as e:
+        logger.warning(f"pypdf error: {e}")
+    
+    try:
+        from PyPDF2 import PdfReader
+        reader = PdfReader(path)
+        text = clean_text("\n".join(page.extract_text() or "" for page in reader.pages))
+        logger.info(f"Extracted text from PDF (PyPDF2): {len(reader.pages)} pages")
+        return text
+    except ImportError:
+        pass
+    except Exception as e:
+        logger.warning(f"PyPDF2 error: {e}")
+    
+    logger.error("No PDF library available")
+    return ""
+
+
 def image_metadata(path):
+    """Extract image metadata"""
     if Image is None:
         return "Image uploaded, but Pillow is not installed for local image metadata."
     try:
         with Image.open(path) as image:
             width, height = image.size
             return f"Image file: {os.path.basename(path)}\nFormat: {image.format}\nSize: {width} x {height}px"
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Image metadata error: {e}")
         return f"Image file: {os.path.basename(path)}"
 
 
 def ask_llm(system_prompt, user_prompt, max_tokens=900):
+    """Query LLM for analysis"""
     if client is None:
         return "AI analysis is not ready because the Groq package or API key is missing."
     try:
@@ -128,10 +175,12 @@ def ask_llm(system_prompt, user_prompt, max_tokens=900):
         )
         return clean_text(completion.choices[0].message.content)
     except Exception as exc:
+        logger.error(f"LLM error: {exc}")
         return f"I could not analyze this with AI right now: {exc}"
 
 
 def analyze_image(path):
+    """Analyze image using vision model"""
     metadata = image_metadata(path)
     if client is None:
         return metadata + "\n\nI can store this image, but visual understanding needs the Groq package and API key."
@@ -160,12 +209,16 @@ def analyze_image(path):
             max_tokens=900,
             temperature=0.3,
         )
-        return clean_text(completion.choices[0].message.content)
+        result = clean_text(completion.choices[0].message.content)
+        logger.info(f"Image analyzed: {len(result)} chars")
+        return result
     except Exception as exc:
+        logger.error(f"Image analysis error: {exc}")
         return metadata + f"\n\nI could not visually analyze the image right now: {exc}"
 
 
 def looks_like_resume(text, path):
+    """Check if document looks like a resume"""
     name = os.path.basename(path).lower()
     keywords = [
         "resume", "cv", "experience", "education", "skills", "projects",
@@ -176,6 +229,7 @@ def looks_like_resume(text, path):
 
 
 def analyze_resume(text):
+    """Analyze resume quality"""
     prompt = f"""
 Evaluate this resume for ATS quality.
 
@@ -197,6 +251,7 @@ Resume text:
 
 
 def summarize_document(text, filename):
+    """Summarize uploaded document"""
     prompt = f"""
 The user uploaded a document named {filename}.
 Summarize the document, identify important points, and tell the user they can ask questions about it.
@@ -212,6 +267,13 @@ Document text:
 
 
 def process_uploaded_file(path):
+    """
+    Process uploaded file: extract text, summarize, and index to FAISS.
+    Args:
+        path: Path to uploaded file
+    Returns:
+        Summary message and status
+    """
     if not path or not os.path.exists(path):
         return "I could not find the uploaded file. Please upload it again."
 
@@ -226,12 +288,17 @@ def process_uploaded_file(path):
         "kind": "unknown",
     }
 
+    logger.info(f"Processing uploaded file: {filename}")
+
+    # Handle images
     if extension in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]:
         context["kind"] = "image"
         analysis = analyze_image(path)
         context["summary"] = analysis
         save_upload_context(context)
-        return f"Uploaded image: {filename}\n\n{analysis}"
+        result = f"Uploaded image: {filename}\n\n{analysis}"
+        logger.info(f"Image processed: {filename}")
+        return result
 
     if extension == ".docx":
         text = extract_docx_text(path)
@@ -245,6 +312,7 @@ def process_uploaded_file(path):
     context["kind"] = "document"
     context["text"] = text
 
+
     if looks_like_resume(text, path):
         context["summary"] = analyze_resume(text)
         context["kind"] = "resume"
@@ -252,10 +320,30 @@ def process_uploaded_file(path):
         context["summary"] = summarize_document(text, filename)
 
     save_upload_context(context)
-    return f"Uploaded file: {filename}\n\n{context['summary']}"
+    
+    rag_status = "Indexed to FAISS" if rag_system else ""
+    result = f"Uploaded file: {filename}\n{rag_status}\n\n{context['summary']}"
+    logger.info(f"Document processed: {filename}")
+    return result
 
 
 def answer_question_about_upload(question):
+    """
+    Answer questions about uploaded documents.
+    First tries RAG system, then falls back to legacy method.
+    """
+
+    if rag_system and has_upload_context():
+        try:
+            logger.info(f"🔍 Querying RAG for: {question}")
+            rag_response = rag_system.query(question)
+            if rag_response.sources:
+                logger.info(f"RAG found {len(rag_response.sources)} sources")
+                return rag_response.answer
+        except Exception as e:
+            logger.warning(f"RAG query failed, using fallback: {e}")
+
+
     context = load_upload_context()
     if not context:
         return ""
@@ -274,8 +362,28 @@ Uploaded content/context:
 User question:
 {question}
 """
-    return ask_llm(
+    result = ask_llm(
         "Answer questions using the uploaded file context. If the answer is not in the file, say that clearly and then help with the best available reasoning.",
         prompt,
         max_tokens=1000,
     )
+    logger.info(f"Legacy Q&A processed")
+    return result
+
+
+def get_indexed_documents():
+    """Get list of indexed documents in FAISS"""
+    if rag_system:
+        stats = rag_system.get_db_stats()
+        if stats["status"] == "active":
+            return stats.get("indexed_documents", [])
+    return []
+
+
+def clear_indexed_documents():
+    """Clear FAISS index (use with caution)"""
+    if rag_system:
+        return rag_system.clear_database()
+    return {"status": "error", "message": "RAG system not available"}
+
+

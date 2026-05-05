@@ -1,0 +1,17 @@
+{
+    "test_doc_0.txt": {
+        "added_at": "2026-05-05T19:07:21.604107",
+        "chunk_count": 1,
+        "total_chars": 119
+    },
+    "test_doc_1.txt": {
+        "added_at": "2026-05-05T19:07:21.622150",
+        "chunk_count": 1,
+        "total_chars": 97
+    },
+    "test_doc_2.txt": {
+        "added_at": "2026-05-05T19:07:21.637456",
+        "chunk_count": 1,
+        "total_chars": 80
+    }
+}

@@ -1,18 +1,56 @@
+# Core Environment & Configuration
 python-dotenv
+python-dotenv[cli]
+
+# LLM & AI Services
 groq
-AppOpener
+cohere
+langchain
+langchain-core
+langchain-groq
+langchain-community
+
+# Vector Database & Embeddings (LOCAL - Zero Hallucination)
+faiss-cpu
+sentence-transformers
+transformers
+
+# Document Processing & PDF Handling
+pypdf
+PyPDF2
+pillow
+
+# Web & Automation
 pywhatkit
 bs4
-pillow
-rich
 requests
-keyboard
-cohere
-googlesearch-python
 selenium
-mtranslate
-pygame
-edge-tts
+AppOpener
+keyboard
+
+# UI & Visualization
 PyQt5
+PyQt5-sip
+rich
+
+# Audio & Media
+edge-tts
+pygame
+sounddevice
+scipy
+acrcloud
+
+# Additional Utilities
 webdriver-manager
-pypdf
+mtranslate
+pydantic
+aiofiles
+
+# System Control
+screen-brightness-control
+
+# Development & Testing
+pytest
+python-multipart
+uvicorn
+fastapi
