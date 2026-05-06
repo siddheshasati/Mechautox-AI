@@ -2,7 +2,7 @@
 .venv/
 venv/
 
-# Environment files
+# Environment file
 .env
 .env.*
 
