@@ -395,4 +395,4 @@ B.E. Computer Science — Sinhgad Institute of Technology & Science, Pune
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License 
