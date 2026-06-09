@@ -29,7 +29,7 @@
 
 ## 🔍 Project Overview
 
-MechautoX AI is a desktop-native, domain-specific AI assistant built for the automotive world. It goes far beyond a simple chatbot — it can retrieve grounded answers from automotive knowledge bases, search the live web for real-time information, execute system automations, generate diagnostic images, write and explain code, and deliver contextual or abbreviated answers based on the user's intent.
+MechautoX AI is a desktop-native, domain-specific AI assistant. It goes far beyond a simple chatbot — it can retrieve grounded answers from knowledge bases, search the live web for real-time information, execute system automations, generate diagnostic images, write and explain code, and deliver contextual or abbreviated answers based on the user's intent.
 
 Everything runs through a single **PyQt5 desktop application**, keeping the experience native and offline-capable, with cloud APIs (Groq, Cohere, Pollinations) called only when needed.
 
@@ -372,12 +372,9 @@ Native desktop GUI built with Qt. Renders the chat window, image panels, history
 
 - [ ] **HuggingFace Local Embeddings** — Replace Cohere API with `all-MiniLM-L6-v2` or `nomic-embed-text` for fully offline embedding and zero API cost
 - [ ] **Self-Hosted Diffusion Model** — Replace Pollinations with a local Stable Diffusion pipeline for production-quality, privacy-safe image generation
-- [ ] **Multimodal Input** — Accept dashboard photos and warning light images; diagnose via vision-language model
-- [ ] **OBD-II Live Integration** — Connect via ELM327 Bluetooth dongle for real-time fault code reading directly into the chat
-- [ ] **Vehicle Profile System** — User registers their specific vehicle; all RAG queries pre-filtered to that make/model/year
-- [ ] **Voice Interface** — Whisper STT + TTS output for hands-free workshop use
 - [ ] **Fine-tuned Automotive LLM** — QLoRA fine-tuning on automotive corpora for improved domain accuracy on Indian vehicle data
-- [ ] **Multi-language Support** — Hindi and Marathi query support for Indian automotive technicians
+- [ ] **Multi-language Support** — Hindi and Marathi query support
+- [ ] **Muti User Support** — With Advanced Encryption  
 
 ---
 
