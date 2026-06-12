@@ -1,6 +1,6 @@
 #  MechautoX AI
 
-> **A multi-modal AI assistant for the automotive domain — combining RAG over vehicle knowledge bases, real-time web search, desktop automation, AI image generation, and code synthesis — all orchestrated through LangChain and delivered via a native PyQt5 desktop application.**
+> **A multi-modal AI assistant for the automotive domain — combining RAG  knowledge bases, real-time web search, desktop automation, AI image generation, and code synthesis — all orchestrated through LangChain and delivered via a native PyQt5 desktop application.**
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python" />
