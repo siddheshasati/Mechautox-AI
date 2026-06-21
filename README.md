@@ -12,20 +12,7 @@
   <img src="https://img.shields.io/badge/Image_Gen-Pollinations_API-ff69b4?style=for-the-badge" />
 </p>
 
----
 
-## 📖 Table of Contents
-
-1. [Project Overview](#-project-overview)
-2. [Core Capabilities](#-core-capabilities)
-3. [System Architecture](#-system-architecture)
-4. [RAG Pipeline](#-rag-pipeline-deep-dive)
-5. [Data & Ingestion Pipeline](#-data--ingestion-pipeline)
-6. [How It Works — End to End](#-how-it-works--end-to-end)
-7. [Tech Stack & Why Not Alternatives](#-tech-stack--why-not-alternatives)
-8. [Future Roadmap](#-future-roadmap)
-
----
 
 ## 🔍 Project Overview
 
